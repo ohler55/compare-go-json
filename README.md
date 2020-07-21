@@ -17,6 +17,8 @@ feature and benchmarks for a few of the JSON tools for Go.
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
 | JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
 
+_TBD explain each feature in more detail_
+
 # Benchmarks
 
 ```

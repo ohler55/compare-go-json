@@ -78,6 +78,7 @@ Tests run on:
  Processor:       Quad-Core Intel Core i7
  Cores:           4
  Processor Speed: 2.8 GHz
+ Memory:          16 GB
 ```
 
 ## Feature Explanations

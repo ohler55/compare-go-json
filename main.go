@@ -36,6 +36,7 @@ type specs struct {
 	processor string
 	cores     string
 	speed     string
+	memory    string
 }
 
 type call struct {
@@ -118,6 +119,7 @@ func main() {
 		fmt.Printf(" Processor:       %s\n", s.processor)
 		fmt.Printf(" Cores:           %s\n", s.cores)
 		fmt.Printf(" Processor Speed: %s\n", s.speed)
+		fmt.Printf(" Memory:          %s\n", s.memory)
 		// TBD add memory
 	}
 	fmt.Println()
@@ -204,6 +206,7 @@ func getSpecs() (s *specs) {
 				processor: alt.String(jp.C("SPHardwareDataType").N(0).C("cpu_type").First(js)),
 				cores:     alt.String(jp.C("SPHardwareDataType").N(0).C("number_processors").First(js)),
 				speed:     alt.String(jp.C("SPHardwareDataType").N(0).C("current_processor_speed").First(js)),
+				memory:    alt.String(jp.C("SPHardwareDataType").N(0).C("physical_memory").First(js)),
 			}
 			var b []byte
 			if out, err = exec.Command("sw_vers", "-productName").Output(); err == nil {

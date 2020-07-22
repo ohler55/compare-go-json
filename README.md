@@ -19,7 +19,7 @@ feature and benchmarks for a few of the JSON tools for Go.
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
 | JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
 
-[_Details of each feature listed are at the bottom of the page.](#Feature Explanations)
+[_Details of each feature listed are at the bottom of the page_](Feature_Explanations)
 
 # Benchmarks
 

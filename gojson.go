@@ -3,6 +3,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -15,10 +16,12 @@ import (
 var jsonPkg = pkg{
 	name: "json",
 	calls: map[string]*call{
-		"parse":    {name: "Unmarshal", fun: goParse},
-		"validate": {name: "Valid", fun: goValidate},
-		"marshal":  {name: "Marshal", fun: goMarshal},
-		"file1":    {name: "Decode", fun: goFile1},
+		"parse":      {name: "Unmarshal", fun: goParse},
+		"validate":   {name: "Valid", fun: goValidate},
+		"marshal":    {name: "Marshal", fun: goMarshal},
+		"file1":      {name: "Decode", fun: goFile1},
+		"small-file": {name: "Decode", fun: goFileManySmallLoad},
+		"large-file": {name: "Decode", fun: goFileManyLarge},
 	},
 }
 
@@ -60,11 +63,66 @@ func goFile1(b *testing.B) {
 		log.Fatalf("Failed to read %s. %s\n", filename, err)
 	}
 	defer func() { _ = f.Close() }()
+	b.ResetTimer()
+	var data interface{}
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		dec := json.NewDecoder(f)
+		if err := dec.Decode(&data); err != nil && err != io.EOF {
+			benchErr = err
+			b.Fail()
+		}
+	}
+}
+
+func goFileManySmall(b *testing.B) {
+	f := openSmallLogFile()
+	defer func() { _ = f.Close() }()
+	b.ResetTimer()
+	var data interface{}
 	for n := 0; n < b.N; n++ {
 		_, _ = f.Seek(0, 0)
 		dec := json.NewDecoder(f)
 		for {
-			var data interface{}
+			if err := dec.Decode(&data); err == io.EOF {
+				break
+			} else if err != nil {
+				benchErr = err
+				b.Fail()
+			}
+		}
+	}
+}
+
+func goFileManySmallLoad(b *testing.B) {
+	f := openSmallLogFile()
+	defer func() { _ = f.Close() }()
+	b.ResetTimer()
+	var data interface{}
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		j, _ := ioutil.ReadAll(f)
+		dec := json.NewDecoder(bytes.NewReader(j))
+		for {
+			if err := dec.Decode(&data); err == io.EOF {
+				break
+			} else if err != nil {
+				benchErr = err
+				b.Fail()
+			}
+		}
+	}
+}
+
+func goFileManyLarge(b *testing.B) {
+	f := openLargeLogFile()
+	defer func() { _ = f.Close() }()
+	b.ResetTimer()
+	var data interface{}
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		dec := json.NewDecoder(f)
+		for {
 			if err := dec.Decode(&data); err == io.EOF {
 				break
 			} else if err != nil {

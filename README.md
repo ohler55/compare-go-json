@@ -2,22 +2,25 @@
 
 Not all JSON tools cover the same features which make it difficult to
 select a set of tools for a project. Here is an attempt to compare
-feature and benchmarks for a few of the JSON tools for Go.
+features and benchmarks for a few of the JSON tools for Go.
 
 ## Features
 
-| Feature                         | [go/json](https://golang.org/pkg/encoding/json/) | [fastjson](https://github.com/valyala/fastjson) | [jsoniter](https://github.com/json-iterator/go) | [OjG](https://github.com/ohler55/compare-go-json) | [simdjson](https://github.com/minio/simdjson-go) |
+| Feature                         | [go/json](https://golang.org/pkg/encoding/json/) | [fastjson](https://github.com/valyala/fastjson) | [jsoniter](https://github.com/json-iterator/go) | [OjG](https://github.com/ohler55/ojg) | [simdjson](https://github.com/minio/simdjson-go) |
 | ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
 | Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Validate                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Read from io.Reader             | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | ??                 |
-| Read from file                  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Parse - io.Reader (large file)  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                 |
+| Parse from file                 | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Parse to structs                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
 | Parse to interface types        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| Multiple JSON file/stream       | :white_check_mark: | :x:                | ??                 | :white_check_mark: | :x:                |
-| ndjson (newline separated)      | :white_check_mark: | :x:                | ??                 | :white_check_mark: | :white_check_mark: |
+| Multiple JSON file/stream       | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
+| ndjson (newline separated)      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
+| JSON Builder                    | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
 | JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
+| Data type converters            | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
+| Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
 
 [_Details of each feature listed are at the bottom of the page_](#Feature-Explanations)
 
@@ -127,5 +130,16 @@ Tests run on:
  - **Marshal/Write** is the ability of the package to marshal go types
    in JSON.
 
+ - **JSON Builder** is the ability to create new data structures suitable for JSON encoding.
+
  - **[JSONPath](https://goessner.net/articles/JsonPath)** is the
    ability to navigate data using JSONPath expressions.
+
+ - **Data type converters** tools for converting from type to simple
+   data types. Basically marshalling and unmarshalling to simple types
+   instead of to JSON.
+
+ - **[Simple Encoding Notation](https://github.com/ohler55/ojg/blob/develop/sen.md)** is
+   a lazy JSON format where quotes and commas are optional in most
+   cases. A merge of JSON and GraphQL formats for those of us that
+   don't want to be bothered with strict syntax checking.

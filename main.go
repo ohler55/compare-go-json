@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/ohler55/ojg/alt"
 	"github.com/ohler55/ojg/jp"
@@ -29,6 +30,12 @@ const (
 var (
 	filename = "data/patient.json"
 	benchErr error
+
+	smallLogFile = "data/log-small.json"
+	smallSize    = 100
+
+	largeLogFile = "data/log-large.json"
+	largeSize    = 5000
 )
 
 type specs struct {
@@ -92,25 +99,19 @@ func main() {
 		{fun: "validate", title: "Validate string/[]byte", ref: "json"},
 		{fun: "marshal", title: "Marshal to string/[]byte", ref: "json"},
 		{fun: "file1", title: "Read from single JSON file", ref: "json"},
+		{fun: "small-file", title: "Read multiple JSON in a small log file (100MB)", ref: "json"},
+		{fun: "large-file", title: "Read multiple JSON in a semi large log file (5GB)", ref: "json"},
 	} {
 		s.exec(pkgs)
 	}
-	// TBD read from file (single json)
-	// TBD read multiple json, single line (small, medium, large)
-	// TBD read multiple json, indented small
-	// TBD io.Reader multiple json, indented small
+	// TBD read multiple json, indented small, maybe a few patients in one file
 	// TBD write
 	// TBD validate io.Reader
 
 	fmt.Println()
 	fmt.Println(" Higher values (longer bars) are better in all cases. The bar graph compares the")
-	fmt.Println(" parsing performance. The lighter colored bar is the reference, usually the go")
-	fmt.Println(" json package.")
-	fmt.Println()
-	fmt.Println(" The Benchmarks reflect a use case where JSON is either provided as a string or")
-	fmt.Println(" read from a file (io.Reader) then parsed into simple go types of nil, bool, int64")
-	fmt.Println(" float64, string, []interface{}, or map[string]interface{}. When supported, an")
-	fmt.Println(" io.Writer benchmark is also included along with some miscellaneous operations.")
+	fmt.Println(" parsing performance. The lighter colored bar is the reference, the go json")
+	fmt.Println(" package.")
 	fmt.Println()
 	if s := getSpecs(); s != nil {
 		fmt.Println("Tests run on:")
@@ -122,7 +123,6 @@ func main() {
 		fmt.Printf(" Cores:           %s\n", s.cores)
 		fmt.Printf(" Processor Speed: %s\n", s.speed)
 		fmt.Printf(" Memory:          %s\n", s.memory)
-		// TBD add memory
 	}
 	fmt.Println()
 }
@@ -155,7 +155,7 @@ func (s *suite) exec(pkgs []*pkg) {
 		c.ns = c.res.NsPerOp()
 		c.bytes = c.res.AllocedBytesPerOp()
 		c.allocs = c.res.AllocsPerOp()
-		fmt.Printf(" %10s.%-14s %6d ns/op  %6d B/op  %6d allocs/op\n",
+		fmt.Printf(" %10s.%-14s %16d ns/op  %16d B/op  %16d allocs/op\n",
 			p.name, c.name, c.ns, c.bytes, c.allocs)
 	}
 	fmt.Println()
@@ -195,6 +195,75 @@ func loadSample() (data interface{}) {
 		log.Fatalf("Failed to parse %s. %s\n", filename, err)
 	}
 	return
+}
+
+func openSmallLogFile() *os.File {
+	f, err := os.Open(smallLogFile)
+	if err != nil {
+		if err = createLogFile(smallLogFile, smallSize); err != nil {
+			log.Fatalf("Failed to create %s. %s\n", smallLogFile, err)
+		}
+		if f, err = os.Open(smallLogFile); err != nil {
+			log.Fatalf("Failed to open %s. %s\n", smallLogFile, err)
+		}
+	}
+	return f
+}
+
+func openLargeLogFile() *os.File {
+	f, err := os.Open(largeLogFile)
+	if err != nil {
+		if err = createLogFile(largeLogFile, largeSize); err != nil {
+			log.Fatalf("Failed to create %s. %s\n", largeLogFile, err)
+		}
+		if f, err = os.Open(largeLogFile); err != nil {
+			log.Fatalf("Failed to open %s. %s\n", largeLogFile, err)
+		}
+	}
+	return f
+}
+
+// size is in MB.
+func createLogFile(filename string, size int) error {
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = f.Close() }()
+
+	// Build a log entry.
+	var b oj.Builder
+	_ = b.Object()
+	_ = b.Value(time.Now().UnixNano(), "when")
+	_ = b.Value("Just some fake log entry for a generated log file.", "what")
+	_ = b.Array("where")
+	_ = b.Object()
+	_ = b.Value("example.go", "file")
+	_ = b.Value(123, "line")
+	b.Pop()
+	b.Pop()
+	_ = b.Value("benchmark-application", "who")
+	_ = b.Value("INFO", "level")
+	b.PopAll()
+	entry := b.Result()
+
+	var whenX jp.Expr
+	if whenX, err = jp.Parse([]byte("when")); err != nil {
+		return err
+	}
+	j := oj.JSON(entry)
+	cnt := size * 1024 * 1024 / (len(j) + 1)
+	for i := 0; i < cnt; i++ {
+		// Update entry.
+		if err = whenX.Set(entry, time.Now().UnixNano()); err != nil {
+			return err
+		}
+		if err = oj.Write(f, entry); err != nil {
+			return err
+		}
+		_, _ = f.Write([]byte{'\n'})
+	}
+	return nil
 }
 
 func getSpecs() (s *specs) {

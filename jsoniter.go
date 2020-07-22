@@ -3,6 +3,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -15,10 +16,12 @@ import (
 var jsoniterPkg = pkg{
 	name: "jsoniter",
 	calls: map[string]*call{
-		"parse":    {name: "Unmarshal", fun: jsoniterUnmarshal},
-		"validate": {name: "Valid", fun: jsoniterValid},
-		"marshal":  {name: "Marshal", fun: jsoniterMarshal},
-		"file1":    {name: "Decode", fun: jsoniterFile1},
+		"parse":      {name: "Unmarshal", fun: jsoniterUnmarshal},
+		"validate":   {name: "Valid", fun: jsoniterValid},
+		"marshal":    {name: "Marshal", fun: jsoniterMarshal},
+		"file1":      {name: "Decode", fun: jsoniterFile1},
+		"small-file": {name: "Decode", fun: jsoniterFileManySmall},
+		"large-file": {name: "Decode", fun: jsoniterFileManyLarge},
 	},
 }
 
@@ -68,6 +71,49 @@ func jsoniterFile1(b *testing.B) {
 		if err := dec.Decode(&data); err != nil {
 			benchErr = err
 			b.Fail()
+		}
+	}
+}
+
+func jsoniterFileManySmall(b *testing.B) {
+	f := openSmallLogFile()
+	defer func() { _ = f.Close() }()
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		j, _ := ioutil.ReadAll(f)
+		dec := jsoniter.NewDecoder(bytes.NewReader(j))
+		for {
+			var data interface{}
+			if !dec.More() {
+				break
+			}
+			if err := dec.Decode(&data); err != nil {
+				benchErr = err
+				b.Fail()
+			}
+		}
+	}
+}
+
+func jsoniterFileManyLarge(b *testing.B) {
+	f := openLargeLogFile()
+	defer func() { _ = f.Close() }()
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		dec := jsoniter.NewDecoder(f)
+		for {
+			var data interface{}
+			if !dec.More() {
+				break
+			}
+			if err := dec.Decode(&data); err != nil {
+				benchErr = err
+				b.Fail()
+			}
 		}
 	}
 }

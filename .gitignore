@@ -1,1 +1,3 @@
 go-json-benchmarks
+data/log-small.json
+data/log-large.json

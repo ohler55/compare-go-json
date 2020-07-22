@@ -28,65 +28,86 @@ features and benchmarks for a few of the JSON tools for Go.
 
 ```
 Parse string/[]byte to simple go types ([]interface{}, int64, string, etc)
-       json.Unmarshal       45071 ns/op   17985 B/op     336 allocs/op
-         oj.Parse           18157 ns/op    5984 B/op     366 allocs/op
+       json.Unmarshal                 48892 ns/op             17984 B/op               336 allocs/op
+         oj.Parse                     19196 ns/op              5984 B/op               366 allocs/op
    fastjson                 >>> not supported <<<
-   jsoniter.Unmarshal       41758 ns/op   19799 B/op     451 allocs/op
-   simdjson.Parse           64753 ns/op  136901 B/op     370 allocs/op
+   jsoniter.Unmarshal                 40239 ns/op             19800 B/op               451 allocs/op
+   simdjson.Parse                     90506 ns/op            136901 B/op               370 allocs/op
 
-         oj ████████████████████████▊ 2.48
-   jsoniter ██████████▊ 1.08
+         oj █████████████████████████▍ 2.55
+   jsoniter ████████████▏ 1.22
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
-   simdjson ██████▉ 0.70
+   simdjson █████▍ 0.54
    fastjson >>> not supported <<<
 
 Validate string/[]byte
-       json.Valid           11299 ns/op       0 B/op       0 allocs/op
-         oj.Validate         3858 ns/op       0 B/op       0 allocs/op
-   fastjson.Validate         4815 ns/op       0 B/op       0 allocs/op
-   jsoniter.Valid            8737 ns/op    2192 B/op     100 allocs/op
-   simdjson.Validate        27724 ns/op  114241 B/op      18 allocs/op
+       json.Valid                     10981 ns/op                 0 B/op                 0 allocs/op
+         oj.Validate                   3681 ns/op                 0 B/op                 0 allocs/op
+   fastjson.Validate                   4671 ns/op                 0 B/op                 0 allocs/op
+   jsoniter.Valid                      9105 ns/op              2192 B/op               100 allocs/op
+   simdjson.Validate                  26411 ns/op            114240 B/op                18 allocs/op
 
-         oj █████████████████████████████▎ 2.93
-   fastjson ███████████████████████▍ 2.35
-   jsoniter ████████████▉ 1.29
+         oj █████████████████████████████▊ 2.98
+   fastjson ███████████████████████▌ 2.35
+   jsoniter ████████████  1.21
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
-   simdjson ████  0.41
+   simdjson ████▏ 0.42
 
 Marshal to string/[]byte
-       json.Marshal         72439 ns/op   27344 B/op     352 allocs/op
-         oj.JSON            11870 ns/op    4096 B/op       1 allocs/op
+       json.Marshal                   74607 ns/op             27342 B/op               352 allocs/op
+         oj.JSON                      11939 ns/op              4096 B/op                 1 allocs/op
    fastjson                 >>> not supported <<<
-   jsoniter.Marshal         18504 ns/op    7291 B/op      94 allocs/op
+   jsoniter.Marshal                   19446 ns/op              7291 B/op                94 allocs/op
    simdjson                 >>> not supported <<<
 
-         oj █████████████████████████████████████████████████████████████  6.10
-   jsoniter ███████████████████████████████████████▏ 3.91
+         oj ██████████████████████████████████████████████████████████████▍ 6.25
+   jsoniter ██████████████████████████████████████▎ 3.84
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
    fastjson >>> not supported <<<
    simdjson >>> not supported <<<
 
 Read from single JSON file
-       json.Decode          56546 ns/op   32655 B/op     346 allocs/op
-         oj.ParseReader     21717 ns/op   10080 B/op     367 allocs/op
+       json.Decode                    72469 ns/op             32624 B/op               344 allocs/op
+         oj.ParseReader               23420 ns/op             10080 B/op               367 allocs/op
    fastjson                 >>> not supported <<<
-   jsoniter.Decode          37733 ns/op   20472 B/op     456 allocs/op
+   jsoniter.Decode                    46320 ns/op             20472 B/op               456 allocs/op
    simdjson                 >>> not supported <<<
 
-         oj ██████████████████████████  2.60
-   jsoniter ██████████████▉ 1.50
+         oj ██████████████████████████████▉ 3.09
+   jsoniter ███████████████▋ 1.56
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
    fastjson >>> not supported <<<
    simdjson >>> not supported <<<
 
- Higher values (longer bars) are better in all cases. The bar graph compares the
- parsing performance. The lighter colored bar is the reference, usually the go
- json package.
+Read multiple JSON in a small log file (100MB)
+       json.Decode               1348331757 ns/op         855642218 B/op          14810403 allocs/op
+         oj.ParseReader           649038041 ns/op         518047360 B/op          15995224 allocs/op
+   fastjson                 >>> not supported <<<
+   jsoniter.Decode               1079811228 ns/op         927208456 B/op          19390064 allocs/op
+   simdjson.ParseReader           652181597 ns/op        1285476585 B/op          15416464 allocs/op
 
- The Benchmarks reflect a use case where JSON is either provided as a string or
- read from a file (io.Reader) then parsed into simple go types of nil, bool, int64
- float64, string, []interface{}, or map[string]interface{}. When supported, an
- io.Writer benchmark is also included along with some miscellaneous operations.
+         oj ████████████████████▊ 2.08
+   simdjson ████████████████████▋ 2.07
+   jsoniter ████████████▍ 1.25
+       json ▓▓▓▓▓▓▓▓▓▓ 1.00
+   fastjson >>> not supported <<<
+
+Read multiple JSON in a semi large log file (5GB)
+       json.Decode              80493161639 ns/op       29360272024 B/op         740519974 allocs/op
+         oj.ParseReader         36165605980 ns/op       12480784192 B/op         799761453 allocs/op
+   fastjson                 >>> not supported <<<
+   jsoniter.Decode              77476413417 ns/op       32939373944 B/op         969507185 allocs/op
+   simdjson.ParseReader    >>> out of memory <<<
+
+         oj ██████████████████████▎ 2.23
+   jsoniter ██████████▍ 1.04
+       json ▓▓▓▓▓▓▓▓▓▓ 1.00
+   fastjson >>> not supported <<<
+   simdjson >>> out of memory <<<
+
+ Higher values (longer bars) are better in all cases. The bar graph compares the
+ parsing performance. The lighter colored bar is the reference, the go json
+ package.
 
 Tests run on:
  OS:              Ubuntu 18.04.4 LTS

@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -90,6 +91,7 @@ func main() {
 		{fun: "parse", title: "Parse string/[]byte to simple go types ([]interface{}, int64, string, etc)", ref: "json"},
 		{fun: "validate", title: "Validate string/[]byte", ref: "json"},
 		{fun: "marshal", title: "Marshal to string/[]byte", ref: "json"},
+		{fun: "file1", title: "Read from single JSON file", ref: "json"},
 	} {
 		s.exec(pkgs)
 	}
@@ -243,6 +245,21 @@ func getSpecs() (s *specs) {
 					}
 				}
 				s.cores = fmt.Sprintf("%d", cnt)
+			}
+		}
+		if out, err = ioutil.ReadFile("/proc/meminfo"); err == nil {
+			for _, line := range strings.Split(string(out), "\n") {
+				if strings.Contains(line, "MemTotal") {
+					parts := strings.Split(line, ":")
+					if 1 < len(parts) {
+						s.memory = strings.TrimSpace(parts[1])
+						if strings.HasSuffix(s.memory, "kB") {
+							if i, err := strconv.Atoi(strings.Split(s.memory, " ")[0]); err == nil {
+								s.memory = fmt.Sprintf("%d GB", i/1000000)
+							}
+						}
+					}
+				}
 			}
 		}
 	}

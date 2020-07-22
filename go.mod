@@ -9,5 +9,3 @@ require (
 	github.com/ohler55/ojg v1.2.0
 	github.com/valyala/fastjson v1.5.3
 )
-
-replace github.com/ohler55/ojg => ../ojg

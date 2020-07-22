@@ -10,12 +10,12 @@ feature and benchmarks for a few of the JSON tools for Go.
 | ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
 | Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Validate                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Read from io.Reader             | :white_check_mark: | :x:                | ??                 | :white_check_mark: | ??                 |
+| Read from io.Reader             | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | ??                 |
 | Read from file                  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Parse to structs                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
 | Parse to interface types        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| Multiple JSON file/stream       | :x:                | :x:                | ??                 | :white_check_mark: | :x:                |
-| ndjson (newline separated)      | :x:                | :x:                | ??                 | :white_check_mark: | :white_check_mark: |
+| Multiple JSON file/stream       | :white_check_mark: | :x:                | ??                 | :white_check_mark: | :x:                |
+| ndjson (newline separated)      | :white_check_mark: | :x:                | ??                 | :white_check_mark: | :white_check_mark: |
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
 | JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
 
@@ -25,40 +25,53 @@ feature and benchmarks for a few of the JSON tools for Go.
 
 ```
 Parse string/[]byte to simple go types ([]interface{}, int64, string, etc)
-       json.Unmarshal       42225 ns/op   17983 B/op     336 allocs/op
-         oj.Parse           18500 ns/op    5984 B/op     366 allocs/op
+       json.Unmarshal       45071 ns/op   17985 B/op     336 allocs/op
+         oj.Parse           18157 ns/op    5984 B/op     366 allocs/op
    fastjson                 >>> not supported <<<
-   jsoniter.Unmarshal       32111 ns/op   19797 B/op     451 allocs/op
-   simdjson.Parse           45285 ns/op  136899 B/op     370 allocs/op
+   jsoniter.Unmarshal       41758 ns/op   19799 B/op     451 allocs/op
+   simdjson.Parse           64753 ns/op  136901 B/op     370 allocs/op
 
-         oj ██████████████████████▊ 2.28
-   jsoniter █████████████▏ 1.31
+         oj ████████████████████████▊ 2.48
+   jsoniter ██████████▊ 1.08
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
-   simdjson █████████▎ 0.93
+   simdjson ██████▉ 0.70
    fastjson >>> not supported <<<
 
 Validate string/[]byte
-       json.Valid           12533 ns/op       0 B/op       0 allocs/op
-         oj.Validate         4292 ns/op       0 B/op       0 allocs/op
-   fastjson.Validate         4705 ns/op       0 B/op       0 allocs/op
-   jsoniter.Valid            9860 ns/op    2192 B/op     100 allocs/op
-   simdjson.Validate        24649 ns/op  114241 B/op      18 allocs/op
+       json.Valid           11299 ns/op       0 B/op       0 allocs/op
+         oj.Validate         3858 ns/op       0 B/op       0 allocs/op
+   fastjson.Validate         4815 ns/op       0 B/op       0 allocs/op
+   jsoniter.Valid            8737 ns/op    2192 B/op     100 allocs/op
+   simdjson.Validate        27724 ns/op  114241 B/op      18 allocs/op
 
-         oj █████████████████████████████▏ 2.92
-   fastjson ██████████████████████████▋ 2.66
-   jsoniter ████████████▋ 1.27
+         oj █████████████████████████████▎ 2.93
+   fastjson ███████████████████████▍ 2.35
+   jsoniter ████████████▉ 1.29
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
-   simdjson █████  0.51
+   simdjson ████  0.41
 
 Marshal to string/[]byte
-       json.Marshal         71818 ns/op   27334 B/op     352 allocs/op
-         oj.JSON            13205 ns/op    4096 B/op       1 allocs/op
+       json.Marshal         72439 ns/op   27344 B/op     352 allocs/op
+         oj.JSON            11870 ns/op    4096 B/op       1 allocs/op
    fastjson                 >>> not supported <<<
-   jsoniter.Marshal         17435 ns/op    7290 B/op      94 allocs/op
+   jsoniter.Marshal         18504 ns/op    7291 B/op      94 allocs/op
    simdjson                 >>> not supported <<<
 
-         oj ██████████████████████████████████████████████████████▍ 5.44
-   jsoniter █████████████████████████████████████████▏ 4.12
+         oj █████████████████████████████████████████████████████████████  6.10
+   jsoniter ███████████████████████████████████████▏ 3.91
+       json ▓▓▓▓▓▓▓▓▓▓ 1.00
+   fastjson >>> not supported <<<
+   simdjson >>> not supported <<<
+
+Read from single JSON file
+       json.Decode          56546 ns/op   32655 B/op     346 allocs/op
+         oj.ParseReader     21717 ns/op   10080 B/op     367 allocs/op
+   fastjson                 >>> not supported <<<
+   jsoniter.Decode          37733 ns/op   20472 B/op     456 allocs/op
+   simdjson                 >>> not supported <<<
+
+         oj ██████████████████████████  2.60
+   jsoniter ██████████████▉ 1.50
        json ▓▓▓▓▓▓▓▓▓▓ 1.00
    fastjson >>> not supported <<<
    simdjson >>> not supported <<<
@@ -73,11 +86,10 @@ Marshal to string/[]byte
  io.Writer benchmark is also included along with some miscellaneous operations.
 
 Tests run on:
- Machine:         MacBookPro15,2
- OS:              Mac OS X 10.15.5
- Processor:       Quad-Core Intel Core i7
- Cores:           4
- Processor Speed: 2.8 GHz
+ OS:              Ubuntu 18.04.4 LTS
+ Processor:       Intel(R) Core(TM) i7-8700 CPU
+ Cores:           12
+ Processor Speed: 3.20GHz
  Memory:          16 GB
 ```
 

@@ -4,6 +4,8 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/ohler55/ojg/oj"
@@ -15,6 +17,7 @@ var ojPkg = pkg{
 		"parse":    {name: "Parse", fun: ojParse},
 		"validate": {name: "Validate", fun: ojValidate},
 		"marshal":  {name: "JSON", fun: ojJSON},
+		"file1":    {name: "ParseReader", fun: ojFile1},
 	},
 }
 
@@ -46,5 +49,20 @@ func ojJSON(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		_ = oj.JSON(data, &opt)
+	}
+}
+
+func ojFile1(b *testing.B) {
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("Failed to read %s. %s\n", filename, err)
+	}
+	defer func() { _ = f.Close() }()
+	p := &oj.Parser{Reuse: true}
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		if _, benchErr = p.ParseReader(f); benchErr != nil {
+			b.Fail()
+		}
 	}
 }

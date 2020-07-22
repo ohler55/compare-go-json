@@ -5,6 +5,8 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"log"
+	"os"
 	"testing"
 
 	jsoniter "github.com/json-iterator/go"
@@ -16,6 +18,7 @@ var jsoniterPkg = pkg{
 		"parse":    {name: "Unmarshal", fun: jsoniterUnmarshal},
 		"validate": {name: "Valid", fun: jsoniterValid},
 		"marshal":  {name: "Marshal", fun: jsoniterMarshal},
+		"file1":    {name: "Decode", fun: jsoniterFile1},
 	},
 }
 
@@ -47,6 +50,23 @@ func jsoniterMarshal(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		if _, benchErr = jsoniter.Marshal(data); benchErr != nil {
+			b.Fail()
+		}
+	}
+}
+
+func jsoniterFile1(b *testing.B) {
+	f, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("Failed to read %s. %s\n", filename, err)
+	}
+	defer func() { _ = f.Close() }()
+	for n := 0; n < b.N; n++ {
+		_, _ = f.Seek(0, 0)
+		dec := jsoniter.NewDecoder(f)
+		var data interface{}
+		if err := dec.Decode(&data); err != nil {
+			benchErr = err
 			b.Fail()
 		}
 	}

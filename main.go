@@ -93,6 +93,7 @@ func main() {
 		&fastjsonPkg,
 		&jsoniterPkg,
 		&simdjsonPkg,
+		&gjsonPkg,
 	}
 	for _, s := range []*suite{
 		{fun: "parse", title: "Parse string/[]byte to simple go types ([]interface{}, int64, string, etc)", ref: "json"},
@@ -105,7 +106,6 @@ func main() {
 		s.exec(pkgs)
 	}
 	// TBD read multiple json, indented small, maybe a few patients in one file
-	// TBD write
 	// TBD validate io.Reader
 
 	fmt.Println()

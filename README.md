@@ -6,21 +6,21 @@ features and benchmarks for a few of the JSON tools for Go.
 
 ## Features
 
-| Feature                         | [go/json](https://golang.org/pkg/encoding/json/) | [fastjson](https://github.com/valyala/fastjson) | [jsoniter](https://github.com/json-iterator/go) | [OjG](https://github.com/ohler55/ojg) | [simdjson](https://github.com/minio/simdjson-go) |
-| ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Validate                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Parse - io.Reader (large file)  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                 |
-| Parse from file                 | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Parse to structs                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
-| Parse to interface types        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| Multiple JSON file/stream       | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
-| ndjson (newline separated)      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
-| JSON Builder                    | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| Data type converters            | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
-| Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                |
+| Feature                         | [go/json](https://golang.org/pkg/encoding/json/) | [fastjson](https://github.com/valyala/fastjson) | [jsoniter](https://github.com/json-iterator/go) | [OjG](https://github.com/ohler55/ojg) | [simdjson](https://github.com/minio/simdjson-go) | [gjson](https://github.com/tidwall/gjson)
+| ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Validate                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Parse - io.Reader (large file)  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
+| Parse from file                 | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| Parse to structs                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
+| Parse to interface types        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
+| Multiple JSON file/stream       | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
+| ndjson (newline separated)      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
+| JSON Builder                    | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
+| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | limited alternate  |
+| Data type converters            | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
+| Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
 
 [_Details of each feature listed are at the bottom of the page_](#Feature-Explanations)
 

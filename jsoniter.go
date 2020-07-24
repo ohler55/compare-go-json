@@ -31,7 +31,7 @@ func jsoniterUnmarshal(b *testing.B) {
 
 	var result interface{}
 	for n := 0; n < b.N; n++ {
-		if benchErr := jsoniter.Unmarshal(sample, &result); benchErr != nil {
+		if benchErr = jsoniter.Unmarshal(sample, &result); benchErr != nil {
 			b.Fail()
 		}
 	}

@@ -28,7 +28,7 @@ func ojParse(b *testing.B) {
 	b.ResetTimer()
 	p := &oj.Parser{Reuse: true}
 	for n := 0; n < b.N; n++ {
-		if _, benchErr := p.Parse(sample); benchErr != nil {
+		if _, benchErr = p.Parse(sample); benchErr != nil {
 			b.Fail()
 		}
 	}
@@ -39,7 +39,7 @@ func ojValidate(b *testing.B) {
 	b.ResetTimer()
 	var v oj.Validator
 	for n := 0; n < b.N; n++ {
-		if benchErr := v.Validate(sample); benchErr != nil {
+		if benchErr = v.Validate(sample); benchErr != nil {
 			b.Fail()
 		}
 	}
@@ -90,7 +90,7 @@ func ojFileManySmallChan(b *testing.B) {
 	var p oj.Parser
 	for n := 0; n < b.N; n++ {
 		_, _ = f.Seek(0, 0)
-		if _, benchErr := p.ParseReader(f, rc); benchErr != nil {
+		if _, benchErr = p.ParseReader(f, rc); benchErr != nil {
 			b.Fail()
 		}
 	}

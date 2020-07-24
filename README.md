@@ -8,7 +8,7 @@ features and benchmarks for a few of the JSON tools for Go.
 
 | Feature                         | [go/json](https://golang.org/pkg/encoding/json/) | [fastjson](https://github.com/valyala/fastjson) | [jsoniter](https://github.com/json-iterator/go) | [OjG](https://github.com/ohler55/ojg) | [simdjson](https://github.com/minio/simdjson-go) | [gjson](https://github.com/tidwall/gjson)
 | ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Parse []byte to simple go types | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark:* |
 | Validate                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | Parse - io.Reader (large file)  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
 | Parse from file                 | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
@@ -18,9 +18,13 @@ features and benchmarks for a few of the JSON tools for Go.
 | ndjson (newline separated)      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
 | JSON Builder                    | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
-| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | limited alternate  |
+| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:**              |
 | Data type converters            | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
 | Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
+| Parser Test coverage            | --                 | 98.1%              | 21.2%              | 100%               | 59.4%              | 91.8%              |
+
+ * _gjson does not validate while parsing (try a number of 1.2e3e4)_
+ ** _gjson has an alternative search feature_
 
 [_Details of each feature listed are at the bottom of the page_](#Feature-Explanations)
 
@@ -177,3 +181,7 @@ Tests run on:
    a lazy JSON format where quotes and commas are optional in most
    cases. A merge of JSON and GraphQL formats for those of us that
    don't want to be bothered with strict syntax checking.
+
+ - **Parser Test coverage** percent unit test coverage of the parser
+   package. It does not include coverage of other package in the
+   offering.

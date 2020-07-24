@@ -30,39 +30,15 @@ func simdjsonParse(b *testing.B) {
 	b.ResetTimer()
 
 	var pj simdjson.ParsedJson
-	tmp := &simdjson.Iter{}
-	obj := &simdjson.Object{}
-	ary := &simdjson.Array{}
 	for n := 0; n < b.N; n++ {
 		parsed, err := simdjson.Parse(sample, &pj)
 		if err != nil {
 			benchErr = err
 			b.Fail()
+			break
 		}
-		iter := parsed.Iter()
-		typ := iter.Advance()
-		switch typ {
-		case simdjson.TypeRoot:
-			if typ, tmp, benchErr = iter.Root(tmp); benchErr != nil {
-				b.Fail()
-			}
-			switch typ {
-			case simdjson.TypeArray:
-				if ary, benchErr = tmp.Array(ary); benchErr != nil {
-					b.Fail()
-				}
-				if _, benchErr = ary.Interface(); benchErr != nil {
-					b.Fail()
-				}
-			case simdjson.TypeObject:
-				if obj, benchErr = tmp.Object(obj); benchErr != nil {
-					b.Fail()
-				}
-				var m map[string]interface{}
-				if m, benchErr = obj.Map(m); benchErr != nil {
-					b.Fail()
-				}
-			}
+		if benchErr = simdjsonExtract(parsed); benchErr != nil {
+			b.Fail()
 		}
 	}
 }

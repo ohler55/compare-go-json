@@ -30,7 +30,7 @@ func goParse(b *testing.B) {
 	b.ResetTimer()
 	var result interface{}
 	for n := 0; n < b.N; n++ {
-		if benchErr := json.Unmarshal(sample, &result); benchErr != nil {
+		if benchErr = json.Unmarshal(sample, &result); benchErr != nil {
 			b.Fail()
 		}
 	}
@@ -51,7 +51,7 @@ func goMarshal(b *testing.B) {
 	data := loadSample()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		if _, benchErr := json.MarshalIndent(data, "", "  "); benchErr != nil {
+		if _, benchErr = json.MarshalIndent(data, "", "  "); benchErr != nil {
 			b.Fail()
 		}
 	}

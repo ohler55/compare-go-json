@@ -18,13 +18,13 @@ features and benchmarks for a few of the JSON tools for Go.
 | ndjson (newline separated)      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
 | Marshal/Write                   | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                |
 | JSON Builder                    | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
-| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:**              |
+| JSONPath                        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:*               |
 | Data type converters            | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
 | Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
 | Parser Test coverage            | --                 | 98.1%              | 21.2%              | 100%               | 59.4%              | 91.8%              |
 
  * _gjson does not validate while parsing (try a number of 1.2e3e4)_
- ** _gjson has an alternative search feature_
+ * _gjson has an alternative search feature_
 
 [_Details of each feature listed are at the bottom of the page_](#Feature-Explanations)
 

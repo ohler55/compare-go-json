@@ -18,6 +18,7 @@ var jsoniterPkg = pkg{
 	calls: map[string]*call{
 		"parse":      {name: "Unmarshal", fun: jsoniterUnmarshal},
 		"validate":   {name: "Valid", fun: jsoniterValid},
+		"decode":     {name: "Decode", fun: jsoniterDecode},
 		"marshal":    {name: "Marshal", fun: jsoniterMarshal},
 		"file1":      {name: "Decode", fun: jsoniterFile1},
 		"small-file": {name: "Decode", fun: jsoniterFileManySmall},
@@ -43,6 +44,20 @@ func jsoniterValid(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		if !jsoniter.Valid(sample) {
 			benchErr = errors.New("JSON not valid")
+			b.Fail()
+		}
+	}
+}
+
+func jsoniterDecode(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	b.ResetTimer()
+
+	var data interface{}
+	for n := 0; n < b.N; n++ {
+		dec := jsoniter.NewDecoder(bytes.NewReader(sample))
+		if err := dec.Decode(&data); err != nil {
+			benchErr = err
 			b.Fail()
 		}
 	}

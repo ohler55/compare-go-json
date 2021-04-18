@@ -18,6 +18,7 @@ var jsonPkg = pkg{
 	calls: map[string]*call{
 		"parse":      {name: "Unmarshal", fun: goParse},
 		"validate":   {name: "Valid", fun: goValidate},
+		"decode":     {name: "Decode", fun: goDecode},
 		"marshal":    {name: "Marshal", fun: goMarshal},
 		"file1":      {name: "Decode", fun: goFile1},
 		"small-file": {name: "Decode", fun: goFileManySmallLoad},
@@ -43,6 +44,24 @@ func goValidate(b *testing.B) {
 		if !json.Valid(sample) {
 			benchErr = errors.New("JSON not valid")
 			b.Fail()
+		}
+	}
+}
+
+func goDecode(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		dec := json.NewDecoder(bytes.NewReader(sample))
+		for {
+			_, err := dec.Token()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				benchErr = err
+				b.Fail()
+			}
 		}
 	}
 }

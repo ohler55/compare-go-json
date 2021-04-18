@@ -16,6 +16,7 @@ var ojPkg = pkg{
 	calls: map[string]*call{
 		"parse":      {name: "Parse", fun: ojParse},
 		"validate":   {name: "Validate", fun: ojValidate},
+		"decode":     {name: "Tokenize", fun: ojTokenize},
 		"marshal":    {name: "JSON", fun: ojJSON},
 		"file1":      {name: "ParseReader", fun: ojFile1},
 		"small-file": {name: "ParseReader", fun: ojFileManySmallLoad},
@@ -41,6 +42,18 @@ func ojValidate(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		if benchErr = v.Validate(sample); benchErr != nil {
 			b.Fail()
+		}
+	}
+}
+
+func ojTokenize(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	b.ResetTimer()
+	h := oj.ZeroHandler{}
+	t := oj.Tokenizer{}
+	for n := 0; n < b.N; n++ {
+		if err := t.Parse(sample, &h); err != nil {
+			log.Fatal(err)
 		}
 	}
 }

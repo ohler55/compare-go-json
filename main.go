@@ -98,6 +98,7 @@ func main() {
 	for _, s := range []*suite{
 		{fun: "parse", title: "Parse string/[]byte to simple go types ([]interface{}, int64, string, etc)", ref: "json"},
 		{fun: "validate", title: "Validate string/[]byte", ref: "json"},
+		{fun: "decode", title: "Iterate tokens in a string/[]byte", ref: "json"},
 		{fun: "marshal", title: "Marshal to string/[]byte", ref: "json"},
 		{fun: "file1", title: "Read from single JSON file", ref: "json"},
 		{fun: "small-file", title: "Read multiple JSON in a small log file (100MB)", ref: "json"},

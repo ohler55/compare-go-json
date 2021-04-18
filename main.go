@@ -156,11 +156,11 @@ func (s *suite) exec(pkgs []*pkg) {
 		c.ns = c.res.NsPerOp()
 		c.bytes = c.res.AllocedBytesPerOp()
 		c.allocs = c.res.AllocsPerOp()
-		fmt.Printf(" %10s.%-14s %16d ns/op  %16d B/op  %16d allocs/op\n",
+		fmt.Printf(" %10s.%-14s %12d ns/op %12d B/op %12d allocs/op\n",
 			p.name, c.name, c.ns, c.bytes, c.allocs)
 	}
 	fmt.Println()
-	scale := 10 // TBD adjust to fit screen better?
+	scale := 8 // TBD adjust to fit screen better?
 	sort.Slice(results, func(i, j int) bool { return results[i].call.ns < results[j].call.ns })
 	for _, r := range results {
 		c := r.call

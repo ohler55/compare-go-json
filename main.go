@@ -140,7 +140,7 @@ func (s *suite) exec(pkgs []*pkg) {
 		results = append(results, &r)
 		if c == nil {
 			r.call = &call{ns: math.MaxInt64, err: fmt.Errorf("not supported")}
-			fmt.Printf(" %10s                 >>> not supported <<<\n", p.name)
+			fmt.Printf(" %8s >>> not supported <<<\n", p.name)
 			continue
 		}
 		if r.ref {
@@ -150,17 +150,17 @@ func (s *suite) exec(pkgs []*pkg) {
 		if benchErr != nil {
 			c.err = benchErr
 			c.ns = math.MaxInt64
-			fmt.Printf(" %10s.%-14s >>> %s <<<\n", p.name, c.name, benchErr)
+			fmt.Printf(" %8s.%-11s >>> %s <<<\n", p.name, c.name, benchErr)
 			continue
 		}
 		c.ns = c.res.NsPerOp()
 		c.bytes = c.res.AllocedBytesPerOp()
 		c.allocs = c.res.AllocsPerOp()
-		fmt.Printf(" %10s.%-14s %12d ns/op %12d B/op %12d allocs/op\n",
+		fmt.Printf(" %8s.%-11s %12d ns/op %12d B/op %12d allocs/op\n",
 			p.name, c.name, c.ns, c.bytes, c.allocs)
 	}
 	fmt.Println()
-	scale := 8 // TBD adjust to fit screen better?
+	scale := 7 // TBD adjust to fit screen better?
 	sort.Slice(results, func(i, j int) bool { return results[i].call.ns < results[j].call.ns })
 	for _, r := range results {
 		c := r.call
@@ -176,11 +176,11 @@ func (s *suite) exec(pkgs []*pkg) {
 				frac := int(size*8.0) - (int(size) * 8)
 				bar += string([]rune(blocks)[frac : frac+1])
 			} else {
-				fmt.Printf(" %10s >>> %s <<<\n", r.pkg, c.err)
+				fmt.Printf(" %8s >>> %s <<<\n", r.pkg, c.err)
 				continue
 			}
 		}
-		fmt.Printf(" %10s %s %3.2f\n", r.pkg, bar, x)
+		fmt.Printf(" %8s %s %3.2f\n", r.pkg, bar, x)
 	}
 }
 

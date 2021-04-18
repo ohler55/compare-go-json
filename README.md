@@ -23,7 +23,7 @@ features and benchmarks for a few of the JSON tools for Go.
 | Simple Encoding Notation        | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                |
 | Parser Test coverage            | --                 | 93%                | 21%                | 100%               | 57.4%              | 91.5%              |
 
- :boom: _gjson does not validate while parsing (try a number of 1.2e3e4)
+ :boom: _gjson does not validate while parsing (try a number of 1.2e3e4)_
 
  :small_blue_diamond: _gjson has an alternative search feature_
 

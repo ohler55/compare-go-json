@@ -16,13 +16,15 @@ import (
 var jsonPkg = pkg{
 	name: "json",
 	calls: map[string]*call{
-		"parse":      {name: "Unmarshal", fun: goParse},
-		"validate":   {name: "Valid", fun: goValidate},
-		"decode":     {name: "Decode", fun: goDecode},
-		"marshal":    {name: "Marshal", fun: goMarshal},
-		"file1":      {name: "Decode", fun: goFile1},
-		"small-file": {name: "Decode", fun: goFileManySmallLoad},
-		"large-file": {name: "Decode", fun: goFileManyLarge},
+		"parse":            {name: "Unmarshal", fun: goParse},
+		"validate":         {name: "Valid", fun: goValidate},
+		"decode":           {name: "Decode", fun: goDecode},
+		"unmarshal-struct": {name: "Unmarshal", fun: goUnmarshalPatient},
+		"marshal":          {name: "Marshal", fun: goMarshal},
+		"marshal-struct":   {name: "Marshal", fun: goMarshalPatient},
+		"file1":            {name: "Decode", fun: goFile1},
+		"small-file":       {name: "Decode", fun: goFileManySmallLoad},
+		"large-file":       {name: "Decode", fun: goFileManyLarge},
 	},
 }
 
@@ -66,11 +68,36 @@ func goDecode(b *testing.B) {
 	}
 }
 
+func goUnmarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	b.ResetTimer()
+	var patient Patient
+	for n := 0; n < b.N; n++ {
+		if benchErr = json.Unmarshal(sample, &patient); benchErr != nil {
+			b.Fail()
+		}
+	}
+}
+
 func goMarshal(b *testing.B) {
 	data := loadSample()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		if _, benchErr = json.MarshalIndent(data, "", "  "); benchErr != nil {
+		if _, benchErr = json.Marshal(data); benchErr != nil {
+			b.Fail()
+		}
+	}
+}
+
+func goMarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	var patient Patient
+	if err := json.Unmarshal(sample, &patient); err != nil {
+		log.Fatal(err)
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		if _, benchErr = json.Marshal(&patient); benchErr != nil {
 			b.Fail()
 		}
 	}

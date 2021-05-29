@@ -16,13 +16,15 @@ import (
 var jsoniterPkg = pkg{
 	name: "jsoniter",
 	calls: map[string]*call{
-		"parse":      {name: "Unmarshal", fun: jsoniterUnmarshal},
-		"validate":   {name: "Valid", fun: jsoniterValid},
-		"decode":     {name: "Decode", fun: jsoniterDecode},
-		"marshal":    {name: "Marshal", fun: jsoniterMarshal},
-		"file1":      {name: "Decode", fun: jsoniterFile1},
-		"small-file": {name: "Decode", fun: jsoniterFileManySmall},
-		"large-file": {name: "Decode", fun: jsoniterFileManyLarge},
+		"parse":            {name: "Unmarshal", fun: jsoniterUnmarshal},
+		"validate":         {name: "Valid", fun: jsoniterValid},
+		"decode":           {name: "Decode", fun: jsoniterDecode},
+		"unmarshal-struct": {name: "Unmarshal", fun: jsoniterUnmarshalPatient},
+		"marshal":          {name: "Marshal", fun: jsoniterMarshal},
+		"marshal-struct":   {name: "Marshal", fun: jsoniterMarshalPatient},
+		"file1":            {name: "Decode", fun: jsoniterFile1},
+		"small-file":       {name: "Decode", fun: jsoniterFileManySmall},
+		"large-file":       {name: "Decode", fun: jsoniterFileManyLarge},
 	},
 }
 
@@ -63,11 +65,37 @@ func jsoniterDecode(b *testing.B) {
 	}
 }
 
+func jsoniterUnmarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	b.ResetTimer()
+
+	var patient Patient
+	for n := 0; n < b.N; n++ {
+		if benchErr = jsoniter.Unmarshal(sample, &patient); benchErr != nil {
+			b.Fail()
+		}
+	}
+}
+
 func jsoniterMarshal(b *testing.B) {
 	data := loadSample()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		if _, benchErr = jsoniter.Marshal(data); benchErr != nil {
+			b.Fail()
+		}
+	}
+}
+
+func jsoniterMarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	var patient Patient
+	if err := jsoniter.Unmarshal(sample, &patient); err != nil {
+		log.Fatal(err)
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		if _, benchErr = jsoniter.Marshal(&patient); benchErr != nil {
 			b.Fail()
 		}
 	}

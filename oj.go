@@ -8,19 +8,22 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ohler55/ojg"
 	"github.com/ohler55/ojg/oj"
 )
 
 var ojPkg = pkg{
 	name: "oj",
 	calls: map[string]*call{
-		"parse":      {name: "Parse", fun: ojParse},
-		"validate":   {name: "Validate", fun: ojValidate},
-		"decode":     {name: "Tokenize", fun: ojTokenize},
-		"marshal":    {name: "JSON", fun: ojJSON},
-		"file1":      {name: "ParseReader", fun: ojFile1},
-		"small-file": {name: "ParseReader", fun: ojFileManySmallLoad},
-		"large-file": {name: "ParseReader", fun: ojFileManyLarge},
+		"parse":            {name: "Parse", fun: ojParse},
+		"validate":         {name: "Validate", fun: ojValidate},
+		"decode":           {name: "Tokenize", fun: ojTokenize},
+		"unmarshal-struct": {name: "Unmarshal", fun: ojUnmarshalPatient},
+		"marshal":          {name: "JSON", fun: ojJSON},
+		"marshal-struct":   {name: "Marshal", fun: ojMarshalPatient},
+		"file1":            {name: "ParseReader", fun: ojFile1},
+		"small-file":       {name: "ParseReader", fun: ojFileManySmallLoad},
+		"large-file":       {name: "ParseReader", fun: ojFileManyLarge},
 	},
 }
 
@@ -46,6 +49,18 @@ func ojValidate(b *testing.B) {
 	}
 }
 
+func ojUnmarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	p := oj.Parser{Reuse: true}
+	b.ResetTimer()
+	var out Patient
+	for n := 0; n < b.N; n++ {
+		if err := p.Unmarshal(sample, &out); err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func ojTokenize(b *testing.B) {
 	sample, _ := ioutil.ReadFile(filename)
 	b.ResetTimer()
@@ -60,10 +75,25 @@ func ojTokenize(b *testing.B) {
 
 func ojJSON(b *testing.B) {
 	data := loadSample()
-	opt := oj.Options{OmitNil: true, Indent: 2}
+	wr := oj.Writer{Options: ojg.Options{OmitNil: true}}
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		_ = oj.JSON(data, &opt)
+		_ = wr.MustJSON(data)
+	}
+}
+
+func ojMarshalPatient(b *testing.B) {
+	sample, _ := ioutil.ReadFile(filename)
+	var patient Patient
+	if err := oj.Unmarshal(sample, &patient); err != nil {
+		log.Fatal(err)
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		//_ = wr.MustJSON(&patient)
+		if _, err := oj.Marshal(&patient); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
